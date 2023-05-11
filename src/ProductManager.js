@@ -2,7 +2,7 @@ import fs from 'fs'
 
 
 
-class ProductManager {
+export default class ProductManager {
     constructor() {
         this.products = [];
         this.path = './Productos.json';
@@ -68,17 +68,17 @@ class ProductManager {
         return this.products;
     }
 
-    getProductById = (productID) => {
-        const idSearch = this.products.findIndex(product => product.id === productID);
-
-        if (idSearch !== -1) {
-            return console.log(this.products[idSearch])
-        } else {
-            const error = new Error(`Not Found: `)
-            console.log(error)
-            return;
+    getProductById = async (productId) => {
+        try {
+            const data = await fs.promises.readFile(this.path, 'utf-8');
+            const productsCopy = JSON.parse(data);
+            const product = productsCopy.find((p) => p.id === parseInt(productId));
+            return product;
+        } catch (error) {
+            throw error;
         }
-    }
+    };
+
 
     updateProduct = async (id, update) => {
         try {
@@ -125,17 +125,15 @@ class ProductManager {
 
 
 const productManager = new ProductManager()
-// use await in all async methods 
-//(No entiendo perfectamente por que solo funciona si lo llamo con await, cuando no lo uso tengo cierta chance de ocacionar un bug(Si no se cumple la promesa a tiempo se crea un array dentro del array). Agradeceria mucho una breve explicacion en la correccion, o informarme en caso de estar mal.)
-await productManager.addProduct("producto prueba", "Este es un producto prueba", 200, "Sin imagen", "abc122", 25)
-await productManager.addProduct("producto prueba", "Este es un producto prueba", 200, "Sin imagen", "abc123", 25)
-await productManager.addProduct("producto prueba", "Este es un producto prueba", 200, "Sin imagen", "abc124", 25)
-await productManager.addProduct("producto prueba", "Este es un producto prueba", 200, "Sin imagen", "abc125", 25)
-await productManager.addProduct("producto prueba", "Este es un producto prueba", 200, "Sin imagen", "abc125", 25)
-await productManager.addProduct("producto prueba", "Este es un producto prueba", 200, "Sin imagen", "abc126")
-productManager.getProductById(2)
-productManager.getProductById(1)
-await productManager.deleteProduct(2)
-productManager.getProductById(2)
-await productManager.updateProduct(1,{price: 300})
-console.log(await productManager.getProducts())
+// await productManager.addProduct("producto prueba", "Este es un producto prueba", 200, "Sin imagen", "abc122", 25)
+// await productManager.addProduct("producto prueba", "Este es un producto prueba", 200, "Sin imagen", "abc123", 25)
+// await productManager.addProduct("producto prueba", "Este es un producto prueba", 200, "Sin imagen", "abc124", 25)
+// await productManager.addProduct("producto prueba", "Este es un producto prueba", 200, "Sin imagen", "abc125", 25)
+// await productManager.addProduct("producto prueba", "Este es un producto prueba", 200, "Sin imagen", "abc125", 25)
+// await productManager.addProduct("producto prueba", "Este es un producto prueba", 200, "Sin imagen", "abc126")
+// await productManager.getProductById(2)
+// await productManager.getProductById(8)
+// await productManager.deleteProduct(2)
+// productManager.getProductById(2)
+// await productManager.updateProduct(1,{price: 300})
+// console.log(await productManager.getProducts())
